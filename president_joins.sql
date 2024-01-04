@@ -123,3 +123,72 @@ SELECT *
 FROM receipt  -- LEFT table
 RIGHT JOIN customer -- RIGHT table
 ON customer.customer_id = receipt.customer_id;
+
+
+-- JOIN...ON comes after the SELECT...FROM and before WHERE
+
+-- SELECT
+-- FROM
+-- JOIN
+-- ON
+-- WHERE
+-- GROUP BY
+-- HAVING
+-- ORDER BY
+-- LIMIT
+-- OFFSET
+
+SELECT *
+FROM customer
+JOIN receipt 
+ON customer.customer_id = receipt.customer_id
+WHERE last_name = 'Washington';
+
+SELECT customer.customer_id, first_name, last_name, SUM(amount)
+FROM receipt
+JOIN customer
+ON receipt.customer_id = customer.customer_id 
+GROUP BY customer.customer_id, first_name, last_name
+ORDER BY SUM(amount) DESC;
+
+
+-- Aliasing table names and unambiguous column names
+
+-- Two new tables - Teacher, Student
+CREATE TABLE IF NOT EXISTS teacher (
+	teacher_id SERIAL PRIMARY KEY,
+	first_name VARCHAR,
+	last_name VARCHAR
+);
+
+CREATE TABLE student (
+	student_id SERIAL PRIMARY KEY,
+	first_name VARCHAR,
+	last_name VARCHAR,
+	teacher_id INTEGER NOT NULL,
+	FOREIGN KEY(teacher_id) REFERENCES teacher(teacher_id)
+);
+
+INSERT INTO teacher (first_name, last_name) VALUES ('Brian', 'Stanton'), ('Ryan', 'Rhodes');
+
+SELECT *
+FROM teacher;
+
+INSERT INTO student (first_name, last_name, teacher_id)
+VALUES ('Sarah', 'Stodder', 1), ('Alex', 'Swiggum', 2), ('Dylan', 'Katina', 1), ('Dylan', 'Smith', 2);
+
+SELECT *
+FROM student;
+
+SELECT teacher.first_name, teacher.last_name, student.first_name, student.last_name, student_id
+FROM teacher
+JOIN student
+ON teacher.teacher_id = student.teacher_id;
+
+
+-- Alias the table names - we then MUST refer to the tables by their alias
+SELECT t.first_name, t.last_name, s.first_name, s.last_name
+FROM teacher t 
+JOIN student s
+ON t.teacher_id = s.teacher_id;
+
